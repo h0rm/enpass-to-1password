@@ -11,14 +11,17 @@ try {
     let notConverted = 0;
     let converted = 0;
 
-    const csvOutput = ['title,website,username,password,notes,category'];
+    const csvOutput = [
+      "title,website,username,password,notes,email,pin",
+    ];
     const fieldMapping = {
-        title: 'title',
-        url: 'website',
-        username: 'username',
-        password: 'password',
-        notes: 'notes',
-        category: 'category'
+      title: "title",
+      url: "website",
+      username: "username",
+      password: "password",
+      email: "email",
+      pin: "pin",
+      notes: "notes",
     };
 
     vault.items.forEach(item => {
@@ -28,12 +31,13 @@ try {
             || item.category === 'uncategorized'
         ) {
             const rowData = {
-                title: item.title,
-                website: '',
-                username: '',
-                password: '',
-                notes: item.note,
-                category: item.category
+              title: item.title,
+              website: "",
+              username: "",
+              password: "",
+              notes: item.note,
+              email: "",
+              pin: "",
             };
 
             Object.keys(fieldMapping).forEach(type => {
@@ -41,7 +45,10 @@ try {
                 if (item.fields !== undefined) {
                     item.fields.forEach(field => {
                         if (field.type === type) {
-                            if (field.value && !rowData[key]) {
+                            if (field.type === 'email' && !rowData['username']) {
+                                rowData['username'] = '"' + field.value + '"';
+                            }
+                            else if (field.value && !rowData[key]) {
                                 if (field.value === 'url') {
                                     rowData['website'] = '"' + field.value + '"'; 
                                 } else {
